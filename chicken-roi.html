@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Backyard Chicken ROI Calculator — Sirius Acres</title>
+  <meta name="description" content="A calm, interactive estimate of monthly and annual net for a small backyard flock. Eggs, feed, and coop amortization — not financial advice." />
+  <style>
+    :root {
+      --navy: #0B1F33;
+      --green: #2F6B4F;
+      --gold: #E6B84D;
+      --cream: #F4F1E8;
+      --muted: #5a6570;
+      --card: #ffffff;
+      --border: #e2dccf;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--cream);
+      color: var(--navy);
+      line-height: 1.55;
+    }
+    header {
+      background: var(--navy);
+      color: var(--cream);
+      padding: 2.25rem 1.25rem 1.75rem;
+    }
+    .wrap { max-width: 40rem; margin: 0 auto; }
+    .tag {
+      color: var(--gold);
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      font-family: system-ui, sans-serif;
+    }
+    h1 {
+      font-size: 1.65rem;
+      margin: 0.6rem 0 0.35rem;
+      font-weight: 600;
+    }
+    header p {
+      margin: 0.4rem 0 0;
+      opacity: 0.9;
+      max-width: 34rem;
+      font-size: 0.98rem;
+    }
+    main { padding: 1.5rem 1.25rem 2rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.15rem 1.2rem;
+      margin: 1rem 0;
+    }
+    h2 {
+      font-size: 1.15rem;
+      color: var(--green);
+      margin: 0 0 0.85rem;
+    }
+    label {
+      display: block;
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      color: var(--navy);
+      margin: 0.85rem 0 0.3rem;
+    }
+    label:first-of-type { margin-top: 0; }
+    .hint {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 0.15rem;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: system-ui, sans-serif;
+      color: var(--navy);
+      background: #fffefb;
+    }
+    input[type="number"]:focus {
+      outline: 2px solid var(--green);
+      outline-offset: 1px;
+      border-color: var(--green);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem 1rem;
+    }
+    @media (max-width: 520px) {
+      .row { grid-template-columns: 1fr; }
+    }
+    .results {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, #fffef8 0%, #fff 100%);
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 0.5rem 0 0.75rem;
+    }
+    .metric {
+      background: var(--cream);
+      border-radius: 10px;
+      padding: 0.85rem 0.9rem;
+      border: 1px solid var(--border);
+    }
+    .metric .label {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .metric .value {
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-top: 0.15rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .metric .value.pos { color: var(--green); }
+    .metric .value.neg { color: #8b3a3a; }
+    .breakdown {
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0.75rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .breakdown li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid #eee8dc;
+    }
+    .breakdown li:last-child { border-bottom: none; font-weight: 600; color: var(--navy); }
+    .caveat {
+      font-family: system-ui, sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 1rem 0 0;
+      padding: 0.75rem 0.85rem;
+      background: #f7f4ec;
+      border-radius: 8px;
+      border-left: 3px solid var(--gold);
+    }
+    a.cta {
+      display: inline-block;
+      margin-top: 0.9rem;
+      background: var(--green);
+      color: var(--cream);
+      text-decoration: none;
+      padding: 0.7rem 1.05rem;
+      border-radius: 8px;
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+    }
+    a.cta:hover { filter: brightness(1.08); }
+    .links {
+      font-family: system-ui, sans-serif;
+      font-size: 0.9rem;
+    }
+    .links a { color: var(--green); }
+    .links ul { padding-left: 1.2rem; margin: 0.4rem 0 0; }
+    footer {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding: 0.5rem 1.25rem 2.5rem;
+    }
+    footer a { color: var(--green); }
+    .disclosure {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="tag">Sirius Acres · @siriusacres</div>
+      <h1>Backyard chicken ROI calculator</h1>
+      <p>Order-of-magnitude math for a small suburban flock — eggs you would have bought, feed, and coop cost spread over time. Adjust the inputs to match your lot.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="card">
+      <h2>Your flock assumptions</h2>
+      <div class="row">
+        <div>
+          <label for="hens">Number of hens
+            <span class="hint">Typical starter flock: 3–5</span>
+          </label>
+          <input id="hens" type="number" min="1" max="50" step="1" value="4" />
+        </div>
+        <div>
+          <label for="eggs">Eggs per hen / week
+            <span class="hint">Peak-season average; winter runs lower</span>
+          </label>
+          <input id="eggs" type="number" min="0" max="8" step="0.1" value="4" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="price">Egg price ($ / dozen)
+            <span class="hint">Use your grocery receipt</span>
+          </label>
+          <input id="price" type="number" min="0" max="20" step="0.25" value="4.00" />
+        </div>
+        <div>
+          <label for="feed">Feed cost ($ / month)
+            <span class="hint">Layer pellets + grit for the whole flock</span>
+          </label>
+          <input id="feed" type="number" min="0" max="500" step="1" value="18" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="coop">Coop / run build cost ($)
+            <span class="hint">Materials DIY; 0 if you already have one</span>
+          </label>
+          <input id="coop" type="number" min="0" max="10000" step="50" value="600" />
+        </div>
+        <div>
+          <label for="months">Amortize over (months)
+            <span class="hint">Useful life before major rebuild</span>
+          </label>
+          <input id="months" type="number" min="1" max="240" step="1" value="72" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card results" id="results">
+      <h2>Estimated net</h2>
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">Monthly net</div>
+          <div class="value" id="monthly">—</div>
+        </div>
+        <div class="metric">
+          <div class="label">Annual net</div>
+          <div class="value" id="annual">—</div>
+        </div>
+      </div>
+      <ul class="breakdown">
+        <li><span>Egg grocery credit / mo</span><span id="eggCredit">—</span></li>
+        <li><span>Feed / mo</span><span id="feedOut">—</span></li>
+        <li><span>Coop amort / mo</span><span id="coopOut">—</span></li>
+        <li><span>Net / mo</span><span id="netOut">—</span></li>
+      </ul>
+      <p class="caveat">
+        This is a planning sketch, not financial advice. It ignores predation losses, winter lay drop, vet costs, litter, and the value of freshness or compost. Local egg and feed prices swing hard — treat the result as a conversation starter, not a guarantee.
+      </p>
+      <a class="cta" href="https://selfsufficientbackyard.info/sirius?utm_source=owned-site&amp;utm_campaign=tool&amp;utm_medium=chicken-roi-calculator&amp;utm_id=sirius04">See the full backyard system →</a>
+    </div>
+
+    <div class="card links">
+      <h2>Read more</h2>
+      <ul>
+        <li><a href="https://telegra.ph/Backyard-Chicken-ROI-on-a-Suburban-Lot--Eggs-Feed-and-the-Numbers-That-Matter-09-26">Chicken ROI math — eggs, feed, and the numbers that matter</a></li>
+        <li><a href="https://telegra.ph/Backyard-Chickens-High-ROI-Protein-on-a-Small-Lot-09-25">Backyard chickens starter notes</a></li>
+        <li><a href="https://telegra.ph/Suburban-Chickens-vs-HOA--City-Rules--Decide-Before-You-Buy-Birds-09-26">Chickens vs HOA / city rules — decide before you buy birds</a></li>
+        <li><a href="https://telegra.ph/Sirius-Acres--Small-lot-self-reliance-notes-09-25">Sirius Acres hub</a></li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="wrap">
+    <p>Built for small-lot experimenters · Sirius Acres · @siriusacres</p>
+    <p class="disclosure">
+      <strong>Affiliate disclosure:</strong> Links to the full backyard system may be affiliate links. If you buy through them, I may earn a commission at no extra cost to you. I only point to the guide I actually use.
+    </p>
+  </footer>
+
+  <script>
+    (function () {
+      var ids = ["hens", "eggs", "price", "feed", "coop", "months"];
+      function $(id) { return document.getElementById(id); }
+      function num(id) {
+        var v = parseFloat($(id).value);
+        return isFinite(v) ? v : 0;
+      }
+      function money(n) {
+        var sign = n < 0 ? "-" : "";
+        return sign + "$" + Math.abs(n).toFixed(2);
+      }
+      function recalc() {
+        var hens = Math.max(0, num("hens"));
+        var eggsPer = Math.max(0, num("eggs"));
+        var price = Math.max(0, num("price"));
+        var feed = Math.max(0, num("feed"));
+        var coop = Math.max(0, num("coop"));
+        var months = Math.max(1, num("months"));
+
+        var eggsPerMonth = hens * eggsPer * (52 / 12);
+        var eggCredit = (eggsPerMonth / 12) * price;
+        var coopMonthly = coop / months;
+        var netMonthly = eggCredit - feed - coopMonthly;
+        var netAnnual = netMonthly * 12;
+
+        function paint(el, val, colorize) {
+          el.textContent = money(val);
+          if (colorize) {
+            el.classList.remove("pos", "neg");
+            if (val > 0.005) el.classList.add("pos");
+            else if (val < -0.005) el.classList.add("neg");
+          }
+        }
+
+        paint($("monthly"), netMonthly, true);
+        paint($("annual"), netAnnual, true);
+        $("eggCredit").textContent = "+" + money(eggCredit);
+        $("feedOut").textContent = "−" + money(feed);
+        $("coopOut").textContent = "−" + money(coopMonthly);
+        $("netOut").textContent = money(netMonthly);
+      }
+      ids.forEach(function (id) {
+        $(id).addEventListener("input", recalc);
+        $(id).addEventListener("change", recalc);
+      });
+      recalc();
+    })();
+  </script>
+</body>
+</html>

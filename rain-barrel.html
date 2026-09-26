@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rain Barrel Catchment Calculator — Sirius Acres</title>
+  <meta name="description" content="Estimate how many gallons a roof can catch from one rain event or a month of rainfall, adjusted for collection efficiency." />
+  <style>
+    :root {
+      --navy: #0B1F33;
+      --green: #2F6B4F;
+      --gold: #E6B84D;
+      --cream: #F4F1E8;
+      --muted: #5a6570;
+      --card: #ffffff;
+      --border: #e2dccf;
+      --blue: #3d7897;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--cream);
+      color: var(--navy);
+      line-height: 1.55;
+    }
+    header {
+      background: var(--navy);
+      color: var(--cream);
+      padding: 2.25rem 1.25rem 1.75rem;
+    }
+    .wrap { max-width: 40rem; margin: 0 auto; }
+    .tag {
+      color: var(--gold);
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      font-family: system-ui, sans-serif;
+    }
+    h1 {
+      font-size: 1.65rem;
+      margin: 0.6rem 0 0.35rem;
+      font-weight: 600;
+    }
+    header p {
+      margin: 0.4rem 0 0;
+      opacity: 0.9;
+      max-width: 34rem;
+      font-size: 0.98rem;
+    }
+    main { padding: 1.5rem 1.25rem 2rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.15rem 1.2rem;
+      margin: 1rem 0;
+    }
+    h2 {
+      font-size: 1.15rem;
+      color: var(--green);
+      margin: 0 0 0.85rem;
+    }
+    label {
+      display: block;
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      color: var(--navy);
+      margin: 0.85rem 0 0.3rem;
+    }
+    label:first-of-type { margin-top: 0; }
+    .hint {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 0.15rem;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: system-ui, sans-serif;
+      color: var(--navy);
+      background: #fffefb;
+    }
+    input[type="number"]:focus, select:focus {
+      outline: 2px solid var(--green);
+      outline-offset: 1px;
+      border-color: var(--green);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem 1rem;
+    }
+    @media (max-width: 520px) {
+      .row { grid-template-columns: 1fr; }
+    }
+    .results {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, #fffef8 0%, #fff 100%);
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 0.5rem 0 0.75rem;
+    }
+    @media (max-width: 420px) {
+      .metrics { grid-template-columns: 1fr; }
+    }
+    .metric {
+      background: var(--cream);
+      border-radius: 10px;
+      padding: 0.85rem 0.9rem;
+      border: 1px solid var(--border);
+    }
+    .metric .label {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0;
+    }
+    .metric .value {
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--blue);
+      margin-top: 0.15rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .formula, .caveat {
+      font-family: system-ui, sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 1rem 0 0;
+      padding: 0.75rem 0.85rem;
+      background: #f7f4ec;
+      border-radius: 8px;
+      border-left: 3px solid var(--gold);
+    }
+    a.cta {
+      display: inline-block;
+      margin-top: 0.9rem;
+      background: var(--green);
+      color: var(--cream);
+      text-decoration: none;
+      padding: 0.7rem 1.05rem;
+      border-radius: 8px;
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+    }
+    a.cta:hover { filter: brightness(1.08); }
+    .links {
+      font-family: system-ui, sans-serif;
+      font-size: 0.9rem;
+    }
+    .links a { color: var(--green); }
+    .links ul { padding-left: 1.2rem; margin: 0.4rem 0 0; }
+    footer {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding: 0.5rem 1.25rem 2.5rem;
+    }
+    .disclosure {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="tag">Sirius Acres · @siriusacres</div>
+      <h1>Rain barrel catchment calculator</h1>
+      <p>Size your first barrel with simple roof-area math. See how much water one event — or a typical month — could put within reach of your garden.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="card">
+      <h2>Your catchment assumptions</h2>
+      <div class="row">
+        <div>
+          <label for="roof">Roof catchment area (sq ft)
+            <span class="hint">Use the roof plane feeding the downspout, not your whole lot</span>
+          </label>
+          <input id="roof" type="number" min="0" max="100000" step="1" value="800" inputmode="decimal" />
+        </div>
+        <div>
+          <label for="period">Rainfall period
+            <span class="hint">The result uses the same period you choose</span>
+          </label>
+          <select id="period">
+            <option value="event">Per rain event</option>
+            <option value="month">Per month</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="rain">Rainfall (inches)
+            <span class="hint" id="rainHint">One storm or rain event</span>
+          </label>
+          <input id="rain" type="number" min="0" max="100" step="0.01" value="1.00" inputmode="decimal" />
+        </div>
+        <div>
+          <label for="efficiency">Collection efficiency (%)
+            <span class="hint">Leaves room for first-flush loss, wetting, and overflow</span>
+          </label>
+          <input id="efficiency" type="number" min="0" max="100" step="1" value="80" inputmode="decimal" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card results" id="results" aria-live="polite">
+      <h2>Estimated water caught</h2>
+      <div class="metrics">
+        <div class="metric">
+          <div class="label" id="periodLabel">Per rain event</div>
+          <div class="value" id="gallons">—</div>
+        </div>
+        <div class="metric">
+          <div class="label">Raw roof yield</div>
+          <div class="value" id="rawGallons">—</div>
+        </div>
+      </div>
+      <p class="formula">Rule of thumb: <strong>1 inch of rain on 1 square foot ≈ 0.623 gallons</strong>. The main estimate multiplies that yield by your collection efficiency.</p>
+      <p class="caveat">This is planning math, not a promise of potable water. Keep roof materials, local rules, mosquito control, first-flush diversion, overflow routing, and barrel capacity in the plan. Use captured water according to your local guidance.</p>
+      <a class="cta" href="https://selfsufficientbackyard.info/sirius?utm_source=owned-site&amp;utm_campaign=tool&amp;utm_medium=rain-barrel-calculator&amp;utm_id=sirius04">See the full backyard system →</a>
+    </div>
+
+    <div class="card links">
+      <h2>Put the number to work</h2>
+      <ul>
+        <li><a href="https://telegra.ph/Rainwater-Catchment-for-Small-Lots-One-Barrel-Done-Right-09-26">Rainwater catchment notes — one barrel done right</a></li>
+        <li><a href="https://telegra.ph/What-to-Plant-and-Prep-Now-for-Fall-2026-on-a-Small-Suburban-Lot-09-26">Fall 2026 prep checklist — include the barrel before wet weeks</a></li>
+        <li><a href="https://telegra.ph/Sirius-Acres--Small-lot-self-reliance-notes-09-25">Sirius Acres hub</a></li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="wrap">
+    <p>Built for small-lot experimenters · Sirius Acres · @siriusacres</p>
+    <p class="disclosure"><strong>Affiliate disclosure:</strong> Links to the full backyard system may be affiliate links. If you buy through them, I may earn a commission at no extra cost to you. I only point to the guide I actually use.</p>
+  </footer>
+
+  <script>
+    (function () {
+      function $(id) { return document.getElementById(id); }
+      function num(id) {
+        var value = parseFloat($(id).value);
+        return isFinite(value) && value >= 0 ? value : 0;
+      }
+      function gallons(value) { return value.toLocaleString(undefined, { maximumFractionDigits: 1 }); }
+      function recalc() {
+        var roof = num("roof");
+        var rain = num("rain");
+        var efficiency = Math.min(100, num("efficiency"));
+        var raw = roof * rain * 0.623;
+        var caught = raw * (efficiency / 100);
+        var month = $("period").value === "month";
+        $("periodLabel").textContent = month ? "Per month" : "Per rain event";
+        $("rainHint").textContent = month ? "Typical rainfall for the month" : "One storm or rain event";
+        $("gallons").textContent = gallons(caught) + " gal";
+        $("rawGallons").textContent = gallons(raw) + " gal";
+      }
+      ["roof", "rain", "efficiency", "period"].forEach(function (id) {
+        $(id).addEventListener("input", recalc);
+        $(id).addEventListener("change", recalc);
+      });
+      recalc();
+    })();
+  </script>
+</body>
+</html>
